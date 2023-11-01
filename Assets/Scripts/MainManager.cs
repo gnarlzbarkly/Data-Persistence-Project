@@ -19,8 +19,6 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    public Dictionary<string, int> HighScores;
-
     public static MainManager Instance;
 
     
@@ -35,7 +33,6 @@ public class MainManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        HighScores = new Dictionary<string, int>();
         SpawnGrid();
     }
 
@@ -55,13 +52,6 @@ public class MainManager : MonoBehaviour
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
         }
-        else if (m_GameOver)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
-        }
     }
 
     void AddPoint(int point)
@@ -73,7 +63,10 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
-        GameOverText.SetActive(true);
+        //Load the HighScore Scene
+        ScoresManager.Instance.AddScore(MenuManager.Instance.Name, m_Points);
+        SceneManager.LoadScene(2);
+        //GameOverText.SetActive(true);
     }
 
     public void SpawnGrid()
@@ -91,34 +84,6 @@ public class MainManager : MonoBehaviour
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
             }
-        }
-    }
-
-    [System.Serializable]
-    class SaveData
-    {
-        public Dictionary<string, int> HighScores;
-    }
-
-    public void SaveScores()
-    {
-        SaveData data = new SaveData();
-        data.HighScores = HighScores;
-
-        string json = JsonUtility.ToJson(data);
-    
-        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
-    }
-
-    public void LoadScores()
-    {
-        string path = Application.persistentDataPath + "/savefile.json";
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            SaveData data = JsonUtility.FromJson<SaveData>(json);
-
-            HighScores = data.HighScores;
         }
     }
 }
