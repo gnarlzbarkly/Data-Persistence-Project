@@ -32,7 +32,7 @@ public class MainManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         SpawnGrid();
     }
 
